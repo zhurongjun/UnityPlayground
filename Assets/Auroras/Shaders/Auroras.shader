@@ -51,7 +51,7 @@ Shader "PlayGround/Auroras"
                 fixed4 col = tex2D(_MainTex, i.uv);
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
-                return sinNoise2(i.uv * 10, _Time * 0.5);
+                return sinNoise2(i.uv * 50, _Time);
             }
             ENDCG
         }
