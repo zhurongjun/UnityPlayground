@@ -20,7 +20,14 @@ inline float sin21 (float2 uv) { return abs(sin(uv.x + sin(uv.y))); }
 inline float2 sin22 (float2 uv) { return float2(sin21(uv.xy), sin21(uv.yx)); }
 
 // 旋转矩阵, 下面要用
-float2x2 rotate_mat = float2x2(0.970, 0.242, -0.242, 0.970);
+float2x2 fixed_rotate_mat = float2x2(0.95534, 0.29552, -0.29552, 0.95534);
+
+// 根据角度构造一个旋转矩阵
+float2x2 rotate_mat (float angle)
+{
+	float c = cos(angle), s = sin(angle);
+	return float2x2(c, s, -s, c);
+}
 
 // 经过 UV扰动 和 fbm 的 tri21 噪声
 // the book of shader中译: https://thebookofshaders.com/?lan=ch
@@ -58,7 +65,7 @@ float triNoise2 (float2 uv, float time, float fbm_attenuation = 0.8f, int fbm_st
 		warp_uv = warp_uv * 1.8 + 0.2;
 
 		// 更新下一次uv采样的位置(做一次缩放，然后旋转换个方向流动)
-		uv = mul(uv * 1.2, rotate_mat);
+		uv = mul(uv * 1.2, fixed_rotate_mat);
 	}
 
 	return v / fbm_factor_sum;
@@ -96,10 +103,55 @@ float sinNoise2 (float2 uv, float time, float fbm_attenuation = 0.8f, int fbm_st
 		warp_uv = warp_uv * 1.8 + 0.2;
 
 		// 更新下一次uv采样的位置(做一次缩放，然后旋转换个方向流动)
-		uv = mul(uv * 1.2, rotate_mat);
+		uv = mul(uv * 1.2, fixed_rotate_mat);
 	}
 
 	return v / fbm_factor_sum;
 }
+
+// 极光噪声类似上述套路, 但是在扰动策略上发生了一点变化
+inline float tri_new (float n) { return clamp(abs(frac(n) - 0.5), 0.01, 0.49); }
+inline float tri21_new (float2 uv) { return tri_new(uv.x + tri_new(uv.y)); }
+inline float2 tri22_new (float2 uv) { return float2(tri_new(uv.x) + tri_new(uv.y), tri21_new(uv.yx)); }
+float aurorasNoise2 (float2 uv, float time, float fbm_attenuation = 0.4f, int fbm_step = 5)
+{
+	float v = 0.0;
+	// fbm的初始强度
+	float fbm_factor = 1;
+	// 所有fbm叠加的总和, 用于将结果压到[0, 1]的区间内
+	float fbm_factor_sum = 0;
+	// 先进行一次基于x轴的扰乱
+	uv = mul(uv, rotate_mat(uv.x * 0.06));
+	// 用于采样扰动量的坐标值
+	float2 warp_uv = uv;
+
+	for (int i = 0; i < fbm_step; ++i)
+	{
+		// 计算扰动uv
+		float2 warp_vec = tri22_new(warp_uv * 1.8);
+		warp_vec = mul(warp_vec, rotate_mat(time));
+
+		// 施加扰动
+		uv += warp_vec / fbm_factor * 0.2;
+
+		// 采样noise结果，施加到结果上去
+		v += tri21_new(uv) * fbm_factor;
+
+		// 累计fbm强度
+		fbm_factor_sum += fbm_factor;
+
+		// 更新fbm强度
+		fbm_factor *= fbm_attenuation;
+
+		// 更新下一次扰动量的采样位置
+		warp_uv *= 1.3;
+
+		// 更新下一次uv采样的位置(做一次缩放，然后旋转换个方向流动)
+		uv = mul(uv * 1.2, -fixed_rotate_mat);
+	}
+
+	return v / fbm_factor_sum;
+}
+
 
 #endif
