@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Auroras
-  m_Shader: {fileID: 4800000, guid: c7f47798eee0f2d4d9a16f04a2c684ea, type: 3}
+  m_Name: TestNoise
+  m_Shader: {fileID: 4800000, guid: b3bd1db98267f8441a5fc510f6fb1d16, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -58,14 +58,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AurorasAttenuation: 0.781
-    - _AurorasAttenuationPow: 0.01
-    - _AurorasAttenuationSpeed: 0.837
-    - _AurorasHeight: 991.6
-    - _AurorasIntensity: 10.27
-    - _AurorasSpeed: 0.062
-    - _AurorasTiling: 0.4
-    - _AurorasTilling: 775.4
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -77,19 +69,12 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RayMarchDistance: 0.178
-    - _RayMarchLen: 0.1
-    - _RayMarchStep: 74
-    - _SkyCurvature: 0.2
-    - _SkyLineBasePow: 0.116
-    - _SkyLineSize: 0.06
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _AurorasColor: {r: 0, g: 0.46226418, b: 0.03846059, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

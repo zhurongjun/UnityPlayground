@@ -1,5 +1,5 @@
-﻿#ifndef AURORAS_HELP_INCLUDE
-#define AURORAS_HELP_INCLUDE
+﻿#ifndef AURORAS_HELP_INCLUDED
+#define AURORAS_HELP_INCLUDED
 
 // 噪声函数(黑白电视)
 inline float hash21 (float2 n) { return frac(sin(dot(n, float2(12.9898, 4.1414))) * 43758.5453); }
